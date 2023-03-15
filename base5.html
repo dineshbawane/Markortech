@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Daily Tournament Winners List</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+		table {
+			margin: 0 auto;
+			font-size: large;
+			border: 1px solid black;
+		}
+
+		h1 {
+			text-align: center;
+			color: #006600;
+			font-size: xx-large;
+			font-family: 'Gill Sans',
+				'Gill Sans MT', ' Calibri',
+				'Trebuchet MS', 'sans-serif';
+		}
+
+		td {
+			background-color: #E4F5D4;
+			border: 1px solid black;
+		}
+
+		th,
+		td {
+			font-weight: bold;
+			border: 1px solid black;
+			padding: 10px;
+			text-align: center;
+		}
+
+		td {
+			font-weight: lighter;
+		}
+	</style>
+	
+</head>
+<body>
+
+<div style="text-align:center;">
+	<h1>Daily Tournament Winners</h1>
+			
+				<label><b>Select Date of Tournament:</b></label>
+				<input type="date" name="message" id="select_Date">
+
+				<input type="submit" onclick="showInput();"><br><br><br>
+
+				<p><strong>Tournament URL on Date <span id='actualDate'></span> : </strong><a><span id='url'></span></a></p>
+</div>				
+<div>
+			 <table id="table-data">
+				  <thead>
+					<tr>
+					  <th>Correlation ID</th>
+					  <th>Username</th>
+					  <th>Points</th>
+					  <th>Rank</th>
+					</tr>
+				  </thead>
+				  <tbody>
+				  </tbody>
+			</table>
+</div>
+
+<script>
+		function showInput() {
+			var selectDate = document.getElementById("select_Date").value;
+			var newSelectDate = selectDate.replace(/-/g, "");
+			var myUrl = "https://s3-eu-west-1.amazonaws.com/static.nektan.com/winners-feed/slots_"+newSelectDate+".json";
+			
+			document.getElementById('url').href= myUrl;
+			document.getElementById('url').innerHTML=myUrl;  
+			document.getElementById('actualDate').innerHTML=selectDate; 
+			
+			
+			$(document).ready(function() {
+			$("#table-data tbody").empty();
+				$.ajax({
+				  url: myUrl,
+				  dataType: "json",
+						success: function(data) {
+						var i=1;
+							$.each(data, function(key, value) {
+							  var row = $("<tr>");
+							  row.append($("<td>").text(value.user_correlation_id));
+							  row.append($("<td>").text(value.Name));
+							  row.append($("<td>").text(value.points));
+							  row.append($("<td>").text(i));
+							  $("#table-data tbody").append(row);
+							  i++;
+							});
+						}
+				});
+			});
+		}
+
+</script>
+
+</body>
+</html>
